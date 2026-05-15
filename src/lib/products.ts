@@ -1,5 +1,17 @@
 import type { Product } from "@/components/site/ProductShowcase";
 
+import p192_1 from "@/assets/products/p192-1.jpg";
+import p192_2 from "@/assets/products/p192-2.jpg";
+import p192_3 from "@/assets/products/p192-3.jpg";
+import p192_4 from "@/assets/products/p192-4.jpg";
+import p192_5 from "@/assets/products/p192-5.jpg";
+import p192_6 from "@/assets/products/p192-6.jpg";
+
+import et312_1 from "@/assets/products/et312-1.jpg";
+import et312_2 from "@/assets/products/et312-2.jpg";
+import et312_3 from "@/assets/products/et312-3.jpg";
+import et312_4 from "@/assets/products/et312-4.jpg";
+
 export const products: Product[] = [
   {
     id: "jbl-xtreme-p192",
@@ -7,6 +19,9 @@ export const products: Product[] = [
     tagline: "ছোট সাইজ, কিন্তু সাউন্ডে পুরো আগুন!",
     description:
       "পার্টি, ট্রাভেল কিংবা আড্ডা — সবকিছুর জন্য পারফেক্ট স্পিকার। কম্প্যাক্ট ডিজাইনের সাথে পাওয়ারফুল সাউন্ড।",
+    price: 1690,
+    oldPrice: 2500,
+    images: [p192_1, p192_2, p192_3, p192_4, p192_5, p192_6],
     features: [
       "12W Dual Speaker",
       "Bluetooth 5.3 + TWS",
@@ -22,6 +37,7 @@ export const products: Product[] = [
       { icon: "zap", label: "Limited Stock" },
       { icon: "truck", label: "Fast Delivery" },
     ],
+    colors: ["Red", "Blue", "Green", "Black"],
   },
   {
     id: "et-312",
@@ -29,6 +45,9 @@ export const products: Product[] = [
     tagline: "হেভি বেস + ক্লিয়ার সাউন্ড",
     description:
       "ট্রাভেল, পার্টি, আড্ডা — সব জায়গায় জমিয়ে দেবে আপনার মুড। ডাবল হর্ন আর ৪০০০mAh ব্যাটারি।",
+    price: 1390,
+    oldPrice: 1600,
+    images: [et312_1, et312_2, et312_3, et312_4],
     features: [
       "20W Powerful Sound",
       "RGB Party Light",
@@ -44,6 +63,6 @@ export const products: Product[] = [
       { icon: "zap", label: "Limited Stock" },
       { icon: "truck", label: "Fast Delivery" },
     ],
-    colors: ["Red", "Blue", "Black", "Green"],
+    colors: ["Blue", "Green", "Black", "Red"],
   },
 ];

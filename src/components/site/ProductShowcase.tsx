@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Check, ShoppingBag, MessageCircle, Flame, Zap, Truck } from "lucide-react";
-import { ImagePlaceholder } from "./ImagePlaceholder";
 
 export type Product = {
   id: string;
@@ -10,13 +9,23 @@ export type Product = {
   features: string[];
   badges: { icon: "fire" | "zap" | "truck"; label: string }[];
   colors?: string[];
-  price?: string;
-  oldPrice?: string;
+  price: number;
+  oldPrice?: number;
+  images: string[];
 };
 
 const badgeIcons = { fire: Flame, zap: Zap, truck: Truck };
+const WA_URL = "https://wa.me/message/3GYE2UMXBSTKE1";
 
-export function ProductShowcase({ product, reverse = false }: { product: Product; reverse?: boolean }) {
+function selectInCheckout(productId: string) {
+  if (typeof window === "undefined") return;
+  sessionStorage.setItem("jeba:selected-product", productId);
+  window.dispatchEvent(new CustomEvent("jeba:select-product", { detail: productId }));
+  const el = document.getElementById("checkout");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+export function ProductShowcase({ product }: { product: Product }) {
   const [activeImg, setActiveImg] = useState(0);
   const [activeColor, setActiveColor] = useState(product.colors?.[0]);
 
@@ -27,15 +36,20 @@ export function ProductShowcase({ product, reverse = false }: { product: Product
     Green: "#16a34a",
   };
 
+  const discount = product.oldPrice
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    : 0;
+
   return (
     <div className="glass-strong rounded-3xl p-5 md:p-6 shadow-card hover:shadow-glow transition-all duration-500 flex flex-col">
       {/* Gallery */}
       <div className="space-y-3">
-        <div className="relative group">
-          <ImagePlaceholder
-            label={`${product.name} – Image ${activeImg + 1}`}
-            ratio="aspect-square"
-            className="transition-transform duration-500 group-hover:scale-[1.02]"
+        <div className="relative group aspect-square rounded-2xl overflow-hidden bg-muted">
+          <img
+            src={product.images[activeImg]}
+            alt={`${product.name} – ${activeImg + 1}`}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
           />
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {product.badges.map((b) => {
@@ -51,9 +65,14 @@ export function ProductShowcase({ product, reverse = false }: { product: Product
               );
             })}
           </div>
+          {discount > 0 && (
+            <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold shadow-lg">
+              -{discount}% OFF
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {[0, 1, 2, 3].map((i) => (
+          {product.images.slice(0, 4).map((src, i) => (
             <button
               key={i}
               onClick={() => setActiveImg(i)}
@@ -61,7 +80,7 @@ export function ProductShowcase({ product, reverse = false }: { product: Product
                 activeImg === i ? "border-gold shadow-gold" : "border-border"
               }`}
             >
-              <ImagePlaceholder label={`${i + 1}`} ratio="aspect-square" />
+              <img src={src} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
@@ -73,6 +92,23 @@ export function ProductShowcase({ product, reverse = false }: { product: Product
           <span className="text-[11px] font-semibold uppercase tracking-widest text-gold">Premium Speaker</span>
           <h3 className="font-display text-2xl md:text-3xl font-bold mt-1">{product.name}</h3>
           <p className="font-bn mt-1.5 text-base text-gold/90">{product.tagline}</p>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-end gap-3 flex-wrap">
+          <span className="font-display text-3xl md:text-4xl font-extrabold gold-text">
+            ৳{product.price.toLocaleString("en-BD")}
+          </span>
+          {product.oldPrice && (
+            <span className="text-lg text-muted-foreground line-through decoration-red-500 decoration-2">
+              ৳{product.oldPrice.toLocaleString("en-BD")}
+            </span>
+          )}
+          {discount > 0 && (
+            <span className="font-bn text-xs px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-600 font-semibold">
+              {discount}% ছাড়
+            </span>
+          )}
         </div>
 
         <p className="font-bn text-sm text-muted-foreground leading-relaxed">{product.description}</p>
@@ -108,15 +144,15 @@ export function ProductShowcase({ product, reverse = false }: { product: Product
         )}
 
         <div className="flex flex-col sm:flex-row gap-2 pt-2 mt-auto">
-          <a
-            href={`#checkout?p=${product.id}`}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full gold-bg text-gold-foreground font-bold shadow-gold hover:scale-105 transition flex-1 text-sm"
+          <button
+            onClick={() => selectInCheckout(product.id)}
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full gold-bg text-gold-foreground font-bold shadow-gold hover:scale-105 transition flex-1 text-sm font-bn"
           >
             <ShoppingBag className="w-4 h-4" />
-            Order Now
-          </a>
+            এখনই কিনুন
+          </button>
           <a
-            href={`https://wa.me/8801832860787?text=${encodeURIComponent(`I want to order ${product.name}`)}`}
+            href={`${WA_URL}?text=${encodeURIComponent(`I want to order ${product.name} (৳${product.price})`)}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass font-semibold hover:border-gold/50 transition flex-1 text-sm"
