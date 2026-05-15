@@ -28,7 +28,7 @@ export function Hero() {
             <span className="font-bn">অর্ডার করুন</span>
           </a>
           <a
-            href="https://wa.me/8801832860787"
+            href="https://wa.me/message/3GYE2UMXBSTKE1"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full glass-strong font-semibold hover:border-gold/50 transition"

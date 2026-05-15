@@ -5,7 +5,7 @@ export function MobileCta() {
     <>
       {/* Floating WhatsApp - all viewports */}
       <a
-        href="https://wa.me/8801832860787"
+        href="https://wa.me/message/3GYE2UMXBSTKE1"
         target="_blank"
         rel="noreferrer"
         aria-label="WhatsApp"
@@ -18,7 +18,7 @@ export function MobileCta() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass-strong border-t border-gold/20 px-3 py-2.5">
         <div className="grid grid-cols-3 gap-2">
           <a
-            href="https://wa.me/8801832860787"
+            href="https://wa.me/message/3GYE2UMXBSTKE1"
             target="_blank"
             rel="noreferrer"
             className="flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold"
