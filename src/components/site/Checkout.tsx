@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Check, Loader2, ShieldCheck, Truck, Wallet, BadgeCheck } from "lucide-react";
 import { products } from "@/lib/products";
 import {
@@ -22,21 +22,35 @@ export function Checkout() {
   const [open, setOpen] = useState(false);
   const [payment, setPayment] = useState("cod");
   const [orderId, setOrderId] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(products[0].id);
+  const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("jeba:selected-product");
+    if (stored) setSelectedProduct(stored);
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<string>).detail;
+      if (detail) setSelectedProduct(detail);
+    };
+    window.addEventListener("jeba:select-product", handler);
+    return () => window.removeEventListener("jeba:select-product", handler);
+  }, []);
+
+  const product = products.find((p) => p.id === selectedProduct) ?? products[0];
+  const subtotal = product.price * qty;
+  const delivery = 80;
+  const total = subtotal + delivery;
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const form = new FormData(e.currentTarget);
     const id = "JEBA-" + Date.now().toString().slice(-6);
     setOrderId(id);
-
-    // SSLCommerz-ready: when payment === 'sslcommerz' you'd POST to /api/public/sslcommerz-init
-    // and redirect to gateway. For now, simulate success.
     await new Promise((r) => setTimeout(r, 900));
     setLoading(false);
     setOpen(true);
     (e.target as HTMLFormElement).reset();
-    void form;
+    setQty(1);
   };
 
   return (
@@ -52,34 +66,44 @@ export function Checkout() {
 
         <div className="glass-strong rounded-3xl p-6 md:p-10 shadow-card">
           <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-5">
-            <Field label="Full Name *" name="name" placeholder="আপনার নাম" required />
-            <Field label="Phone Number *" name="phone" type="tel" placeholder="01XXXXXXXXX" required />
-            <Field
-              label="Full Address *"
-              name="address"
-              placeholder="বিস্তারিত ঠিকানা"
+            <Field label="আপনার নাম *" name="name" placeholder="Full Name" required />
+            <Field label="মোবাইল নাম্বার *" name="phone" type="tel" placeholder="01XXXXXXXXX" required />
+            <Field label="সম্পূর্ণ ঠিকানা *" name="address" placeholder="বাসা, রোড, এরিয়া" required full />
+            <Select
+              label="প্রোডাক্ট *"
+              name="product"
               required
-              full
-            />
-            <Select label="Product *" name="product" required>
+              value={selectedProduct}
+              onChange={(e) => setSelectedProduct(e.target.value)}
+            >
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {p.name} — ৳{p.price}
                 </option>
               ))}
             </Select>
-            <Select label="Color" name="color">
-              <option value="">Default</option>
-              <option value="Red">Red</option>
-              <option value="Blue">Blue</option>
-              <option value="Black">Black</option>
-              <option value="Green">Green</option>
+            <Select label="কালার" name="color">
+              {(product.colors ?? ["Default"]).map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
             </Select>
-            <Field label="Quantity *" name="qty" type="number" defaultValue="1" min={1} required />
-            <Field label="Note (optional)" name="note" placeholder="বিশেষ নির্দেশনা" full />
+            <Field
+              label="পরিমাণ *"
+              name="qty"
+              type="number"
+              value={qty}
+              onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+              min={1}
+              required
+            />
+            <div className="md:col-span-1 rounded-xl bg-muted/40 border border-border p-4 space-y-1.5 text-sm font-bn">
+              <div className="flex justify-between"><span className="text-muted-foreground">প্রোডাক্ট</span><span>৳{subtotal}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">ডেলিভারি</span><span>৳{delivery}</span></div>
+              <div className="flex justify-between border-t border-border pt-1.5 font-bold text-base"><span>মোট</span><span className="gold-text">৳{total}</span></div>
+            </div>
 
             <div className="md:col-span-2">
-              <div className="text-sm font-semibold mb-3">Payment Method</div>
+              <div className="text-sm font-semibold mb-3 font-bn">পেমেন্ট মেথড</div>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">
                 {paymentMethods.map((m) => (
                   <button
@@ -100,6 +124,19 @@ export function Checkout() {
                     )}
                   </button>
                 ))}
+              </div>
+
+              {/* SSLCommerz badge */}
+              <div className="mt-4 flex items-center justify-center md:justify-start gap-3 rounded-xl border border-border bg-muted/40 p-3">
+                <img
+                  src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-01.png"
+                  alt="Pay with SSLCommerz — bKash, Nagad, Rocket, Visa, MasterCard"
+                  className="h-10 md:h-12 w-auto"
+                  loading="lazy"
+                />
+                <p className="text-xs text-muted-foreground font-bn">
+                  নিরাপদ পেমেন্ট — bKash, Nagad, Rocket, Card, Bank
+                </p>
               </div>
             </div>
 
@@ -123,7 +160,7 @@ export function Checkout() {
               className="md:col-span-2 mt-2 inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full gold-bg text-gold-foreground font-bold text-lg shadow-gold hover:scale-[1.02] transition disabled:opacity-60"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-              <span className="font-bn">{loading ? "Processing..." : "অর্ডার কনফার্ম করুন"}</span>
+              <span className="font-bn">{loading ? "Processing..." : `অর্ডার কনফার্ম করুন — ৳${total}`}</span>
             </button>
           </form>
         </div>
@@ -157,7 +194,7 @@ function Field({
 }: React.InputHTMLAttributes<HTMLInputElement> & { label: string; full?: boolean }) {
   return (
     <label className={`block ${full ? "md:col-span-2" : ""}`}>
-      <span className="text-sm font-medium mb-1.5 block">{label}</span>
+      <span className="text-sm font-medium mb-1.5 block font-bn">{label}</span>
       <input
         {...rest}
         className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 transition"
@@ -173,7 +210,7 @@ function Select({
 }: React.SelectHTMLAttributes<HTMLSelectElement> & { label: string }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium mb-1.5 block">{label}</span>
+      <span className="text-sm font-medium mb-1.5 block font-bn">{label}</span>
       <select
         {...rest}
         className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 transition"
