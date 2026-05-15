@@ -52,7 +52,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="https://wa.me/8801832860787"
+            href="https://wa.me/message/3GYE2UMXBSTKE1"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium hover:border-gold/50 transition"
