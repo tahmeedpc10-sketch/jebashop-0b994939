@@ -55,9 +55,10 @@ function Index() {
                 Featured <span className="gold-text">Speakers</span>
               </h2>
             </div>
-            <div className="space-y-24">
-              <ProductShowcase product={products[0]} />
-              <ProductShowcase product={products[1]} reverse />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {products.map((p) => (
+                <ProductShowcase key={p.id} product={p} />
+              ))}
             </div>
           </div>
         </section>

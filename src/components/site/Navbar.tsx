@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu, X, MessageCircle, ShoppingBag } from "lucide-react";
+import logoImg from "@/assets/jeba-logo.jpg";
 
 const links = [
   { href: "#home", label: "Home" },
@@ -29,8 +30,8 @@ export function Navbar() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between h-16 md:h-20">
         <a href="#home" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl gold-bg flex items-center justify-center font-bold text-gold-foreground shadow-gold">
-            J
+          <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-gold/40 shadow-gold bg-navy-deep flex items-center justify-center">
+            <img src={logoImg} alt="Jeba Shop logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-display text-xl md:text-2xl font-bold">
             Jeba <span className="gold-text">Shop</span>
