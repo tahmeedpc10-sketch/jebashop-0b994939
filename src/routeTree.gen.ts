@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentFailRouteImport } from './routes/payment.fail'
 import { Route as PaymentCancelRouteImport } from './routes/payment.cancel'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const PaymentCancelRoute = PaymentCancelRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/payment/cancel': typeof PaymentCancelRoute
   '/payment/fail': typeof PaymentFailRoute
   '/payment/success': typeof PaymentSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/payment/cancel': typeof PaymentCancelRoute
   '/payment/fail': typeof PaymentFailRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -50,18 +58,25 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/payment/cancel': typeof PaymentCancelRoute
   '/payment/fail': typeof PaymentFailRoute
   '/payment/success': typeof PaymentSuccessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/payment/cancel' | '/payment/fail' | '/payment/success'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/payment/cancel'
+    | '/payment/fail'
+    | '/payment/success'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/payment/cancel' | '/payment/fail' | '/payment/success'
+  to: '/' | '/admin' | '/payment/cancel' | '/payment/fail' | '/payment/success'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/payment/cancel'
     | '/payment/fail'
     | '/payment/success'
@@ -69,6 +84,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   PaymentCancelRoute: typeof PaymentCancelRoute
   PaymentFailRoute: typeof PaymentFailRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
@@ -76,6 +92,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -109,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   PaymentCancelRoute: PaymentCancelRoute,
   PaymentFailRoute: PaymentFailRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
