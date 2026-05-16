@@ -46,6 +46,13 @@ export function Checkout() {
   }, []);
 
   const product = products.find((p) => p.id === selectedProduct) ?? products[0];
+
+  useEffect(() => {
+    if (product.colors && !product.colors.includes(selectedColor)) {
+      setSelectedColor(product.colors[0]);
+    }
+  }, [product, selectedColor]);
+
   const subtotal = product.price * qty;
   const delivery = 80;
   const total = subtotal + delivery;
