@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Menu, X, MessageCircle, ShoppingBag } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X, MessageCircle, ShoppingBag, MoreVertical, RefreshCw, Share2, Lock } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import logoImg from "@/assets/jeba-logo.jpg";
 
 const links = [
@@ -14,6 +15,27 @@ const links = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const shareSite = async () => {
+    setMenuOpen(false);
+    const url = window.location.origin;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Jeba Shop", text: "প্রিমিয়াম স্পিকার Jeba Shop থেকে", url }); } catch {}
+    } else {
+      navigator.clipboard.writeText(url);
+      alert("লিংক কপি হয়েছে!");
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
