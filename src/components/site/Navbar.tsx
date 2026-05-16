@@ -91,13 +91,49 @@ export function Navbar() {
           </a>
         </div>
 
-        <button
-          className="lg:hidden p-2 glass rounded-lg"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-1">
+          {/* 3-dot menu — always visible */}
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="p-2 rounded-full hover:bg-muted transition"
+              aria-label="More options"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-52 glass-strong rounded-xl shadow-card border border-border py-1.5 animate-fade-up font-bn z-50">
+                <button
+                  onClick={() => { setMenuOpen(false); window.location.reload(); }}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <RefreshCw className="w-4 h-4 text-primary" /> রিলোড
+                </button>
+                <button
+                  onClick={shareSite}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <Share2 className="w-4 h-4 text-primary" /> শেয়ার ওয়েবসাইট
+                </button>
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <Lock className="w-4 h-4 text-primary" /> অ্যাডমিন লগইন
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <button
+            className="lg:hidden p-2 glass rounded-lg"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Menu"
+          >
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
