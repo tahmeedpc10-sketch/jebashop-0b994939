@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Jeba Shop_Trsuted Electronics Store Bangladesh." },
+      { name: "description", content: "Jeba Shop is a premium, mobile-first e-commerce landing page for a Bangladeshi electronics brand." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Jeba Shop_Trsuted Electronics Store Bangladesh." },
+      { property: "og:description", content: "Jeba Shop is a premium, mobile-first e-commerce landing page for a Bangladeshi electronics brand." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Jeba Shop_Trsuted Electronics Store Bangladesh." },
+      { name: "twitter:description", content: "Jeba Shop is a premium, mobile-first e-commerce landing page for a Bangladeshi electronics brand." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f6ae2bc-413f-464e-81e3-10f784d786e6/id-preview-1174712b--19b773b9-ed12-47ca-9fd3-b83620068843.lovable.app-1778904314568.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7f6ae2bc-413f-464e-81e3-10f784d786e6/id-preview-1174712b--19b773b9-ed12-47ca-9fd3-b83620068843.lovable.app-1778904314568.png" },
     ],
     links: [
       {
