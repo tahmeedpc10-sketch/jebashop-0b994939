@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, Facebook, MapPin, Truck } from "lucide-react";
+import { Phone, MessageCircle, Facebook, Youtube, MapPin, Truck } from "lucide-react";
 import logoImg from "@/assets/jeba-logo.jpg";
 
 export function Footer() {
@@ -21,16 +21,19 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-display text-lg font-bold mb-4 font-bn">যোগাযোগ</h4>
+            <h4 className="font-display text-lg font-bold mb-4 font-bn">যোগাযোগ ও সোশ্যাল</h4>
             <div className="space-y-3 text-sm font-bn">
               <a href="tel:01832860787" className="flex items-center gap-2 hover:text-primary transition">
                 <Phone className="w-4 h-4 text-primary" /> 01832-860787
               </a>
-              <a href="https://wa.me/message/3GYE2UMXBSTKE1" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition">
-                <MessageCircle className="w-4 h-4 text-primary" /> হোয়াটসঅ্যাপ
+              <a href="https://wa.me/message/3GYE2UMXBSTKE1" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-emerald-600 transition">
+                <MessageCircle className="w-4 h-4 text-emerald-600" /> WhatsApp — Jeba Shop
               </a>
-              <a href="#" className="flex items-center gap-2 hover:text-primary transition">
-                <Facebook className="w-4 h-4 text-primary" /> ফেসবুক
+              <a href="https://www.facebook.com/share/1Cbq2EScq8/" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-blue-600 transition">
+                <Facebook className="w-4 h-4 text-blue-600" /> Facebook — Jeba Shop
+              </a>
+              <a href="https://youtube.com/@jeba_shop?si=UfEodkCTAoMRXbJH" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-red-600 transition">
+                <Youtube className="w-4 h-4 text-red-600" /> YouTube — @jeba_shop
               </a>
             </div>
           </div>
