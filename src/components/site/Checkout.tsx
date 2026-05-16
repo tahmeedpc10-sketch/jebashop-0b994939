@@ -31,6 +31,7 @@ export function Checkout() {
   const [payment, setPayment] = useState("cod");
   const [orderId, setOrderId] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(products[0].id);
+  const [selectedColor, setSelectedColor] = useState<string>(products[0].colors?.[0] ?? "");
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
