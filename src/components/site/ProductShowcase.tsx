@@ -18,10 +18,12 @@ const badgeIcons = { fire: Flame, zap: Zap, truck: Truck };
 const WA_URL = "https://wa.me/message/3GYE2UMXBSTKE1";
 
 const colorBn: Record<string, string> = {
-  Red: "লাল",
-  Blue: "নীল",
-  Black: "কালো",
-  Green: "সবুজ",
+  Red: "লাল (RED)",
+  Blue: "নীল (BLUE)",
+  Black: "কালো (BLACK)",
+  Green: "সবুজ (GREEN)",
+  Military: "মিলিটারি (MILITARY)",
+  "Classic Navy Blue": "ক্লাসিক নেভি ব্লু",
 };
 
 function selectInCheckout(productId: string) {
@@ -35,13 +37,6 @@ function selectInCheckout(productId: string) {
 export function ProductShowcase({ product }: { product: Product }) {
   const [activeImg, setActiveImg] = useState(0);
   const [activeColor, setActiveColor] = useState(product.colors?.[0]);
-
-  const colorMap: Record<string, string> = {
-    Red: "#dc2626",
-    Blue: "#2563eb",
-    Black: "#0f172a",
-    Green: "#16a34a",
-  };
 
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
@@ -132,19 +127,22 @@ export function ProductShowcase({ product }: { product: Product }) {
         </div>
 
         {product.colors && (
-          <div className="space-y-1.5 font-bn">
-            <div className="text-xs font-semibold">কালার: <span className="text-primary">{colorBn[activeColor || ""] || activeColor}</span></div>
-            <div className="flex gap-2">
+          <div className="space-y-2 font-bn">
+            <div className="text-xs font-semibold">কালার সিলেক্ট করুন: <span className="text-primary">{colorBn[activeColor || ""] || activeColor}</span></div>
+            <div className="flex flex-wrap gap-2">
               {product.colors.map((c) => (
                 <button
                   key={c}
+                  type="button"
                   onClick={() => setActiveColor(c)}
-                  aria-label={c}
-                  className={`w-7 h-7 rounded-full border-2 transition ${
-                    activeColor === c ? "border-primary scale-110 shadow-gold" : "border-border"
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition uppercase tracking-wide ${
+                    activeColor === c
+                      ? "border-primary bg-primary text-primary-foreground shadow-gold"
+                      : "border-border bg-card hover:border-primary/50"
                   }`}
-                  style={{ background: colorMap[c] }}
-                />
+                >
+                  {c}
+                </button>
               ))}
             </div>
           </div>
