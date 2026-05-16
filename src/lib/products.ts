@@ -37,7 +37,7 @@ export const products: Product[] = [
       { icon: "zap", label: "Limited Stock" },
       { icon: "truck", label: "Fast Delivery" },
     ],
-    colors: ["Red", "Blue", "Green", "Black"],
+    colors: ["Military", "Classic Navy Blue", "Black", "Red"],
   },
   {
     id: "et-312",
@@ -63,6 +63,6 @@ export const products: Product[] = [
       { icon: "zap", label: "Limited Stock" },
       { icon: "truck", label: "Fast Delivery" },
     ],
-    colors: ["Blue", "Green", "Black", "Red"],
+    colors: ["Red", "Blue", "Black", "Green"],
   },
 ];

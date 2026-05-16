@@ -11,18 +11,18 @@ import {
 } from "@/components/ui/dialog";
 
 const paymentMethods = [
-  { id: "cod", label: "ক্যাশ অন ডেলিভারি" },
-  { id: "bkash", label: "বিকাশ" },
-  { id: "nagad", label: "নগদ" },
-  { id: "rocket", label: "রকেট" },
-  { id: "sslcommerz", label: "SSLCommerz" },
+  { id: "cod", label: "ক্যাশ অন ডেলিভারি", sub: "প্রোডাক্ট হাতে পেয়ে টাকা দিন", emoji: "💵" },
+  { id: "bkash", label: "বিকাশ", sub: "Send Money", emoji: "🟣", color: "#E2136E" },
+  { id: "nagad", label: "নগদ", sub: "Send Money", emoji: "🟧", color: "#EE1C25" },
 ];
 
 const colorBn: Record<string, string> = {
-  Red: "লাল",
-  Blue: "নীল",
-  Black: "কালো",
-  Green: "সবুজ",
+  Red: "লাল (RED)",
+  Blue: "নীল (BLUE)",
+  Black: "কালো (BLACK)",
+  Green: "সবুজ (GREEN)",
+  Military: "মিলিটারি",
+  "Classic Navy Blue": "নেভি ব্লু",
 };
 
 export function Checkout() {
@@ -31,6 +31,7 @@ export function Checkout() {
   const [payment, setPayment] = useState("cod");
   const [orderId, setOrderId] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(products[0].id);
+  const [selectedColor, setSelectedColor] = useState<string>(products[0].colors?.[0] ?? "");
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -45,6 +46,13 @@ export function Checkout() {
   }, []);
 
   const product = products.find((p) => p.id === selectedProduct) ?? products[0];
+
+  useEffect(() => {
+    if (product.colors && !product.colors.includes(selectedColor)) {
+      setSelectedColor(product.colors[0]);
+    }
+  }, [product, selectedColor]);
+
   const subtotal = product.price * qty;
   const delivery = 80;
   const total = subtotal + delivery;
@@ -66,7 +74,7 @@ export function Checkout() {
       gram: String(fd.get("gram") || ""),
       productId: product.id,
       productName: product.name,
-      color: String(fd.get("color") || ""),
+      color: selectedColor,
       qty,
       payment,
       subtotal,
@@ -117,11 +125,25 @@ export function Checkout() {
                 </option>
               ))}
             </Select>
-            <Select label="কালার" name="color">
-              {(product.colors ?? ["Default"]).map((c) => (
-                <option key={c} value={c}>{colorBn[c] || c}</option>
-              ))}
-            </Select>
+            <div className="block">
+              <span className="text-sm font-medium mb-1.5 block font-bn">কালার সিলেক্ট করুন *</span>
+              <div className="flex flex-wrap gap-2">
+                {(product.colors ?? ["Default"]).map((c) => (
+                  <button
+                    type="button"
+                    key={c}
+                    onClick={() => setSelectedColor(c)}
+                    className={`px-3 py-2 rounded-xl text-xs font-semibold border-2 uppercase tracking-wide transition font-bn ${
+                      selectedColor === c
+                        ? "border-primary bg-primary text-primary-foreground shadow-gold"
+                        : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  >
+                    {colorBn[c] || c}
+                  </button>
+                ))}
+              </div>
+            </div>
             <Field
               label="পরিমাণ *"
               name="qty"
@@ -138,40 +160,55 @@ export function Checkout() {
             </div>
 
             <div className="md:col-span-2">
-              <div className="text-sm font-semibold mb-3 font-bn">পেমেন্ট মেথড</div>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">
+              <div className="text-sm font-semibold mb-3 font-bn">পেমেন্ট মেথড সিলেক্ট করুন</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {paymentMethods.map((m) => (
                   <button
                     type="button"
                     key={m.id}
                     onClick={() => setPayment(m.id)}
-                    className={`relative rounded-xl px-3 py-3 text-sm font-semibold border transition font-bn ${
+                    className={`relative rounded-2xl p-4 text-left border-2 transition font-bn overflow-hidden ${
                       payment === m.id
-                        ? "border-primary bg-primary/10 text-primary scale-[1.02]"
+                        ? "border-primary bg-primary/5 shadow-gold scale-[1.02]"
                         : "border-border hover:border-primary/40 bg-card"
                     }`}
                   >
-                    {m.label}
-                    {payment === m.id && (
-                      <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                        <Check className="w-3 h-3 text-primary-foreground" strokeWidth={3} />
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0"
+                        style={{ background: m.color || "#16a34a" }}
+                      >
+                        {m.id === "bkash" ? "b" : m.id === "nagad" ? "N" : "💵"}
                       </div>
-                    )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-sm">{m.label}</div>
+                        <div className="text-[11px] text-muted-foreground truncate">{m.sub}</div>
+                      </div>
+                      {payment === m.id && (
+                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0">
+                          <Check className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={3} />
+                        </div>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
 
-              <div className="mt-4 flex items-center justify-center md:justify-start gap-3 rounded-xl border border-border bg-muted p-3">
-                <img
-                  src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-01.png"
-                  alt="SSLCommerz — bKash, Nagad, Rocket, Visa, MasterCard"
-                  className="h-10 md:h-12 w-auto"
-                  loading="lazy"
-                />
-                <p className="text-xs text-muted-foreground font-bn">
-                  নিরাপদ পেমেন্ট — বিকাশ, নগদ, রকেট, কার্ড, ব্যাংক
-                </p>
-              </div>
+              {payment === "bkash" && (
+                <div className="mt-3 rounded-xl border border-pink-200 bg-pink-50 p-3 text-xs text-pink-900 font-bn animate-fade-up">
+                  bKash নাম্বার (Personal): <b>01832-860787</b> — Send Money করে রেফারেন্সে অর্ডার আইডি দিন।
+                </div>
+              )}
+              {payment === "nagad" && (
+                <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-3 text-xs text-orange-900 font-bn animate-fade-up">
+                  Nagad নাম্বার (Personal): <b>01832-860787</b> — Send Money করে রেফারেন্সে অর্ডার আইডি দিন।
+                </div>
+              )}
+              {payment === "cod" && (
+                <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 font-bn animate-fade-up">
+                  ক্যাশ অন ডেলিভারি — প্রোডাক্ট হাতে পেয়ে চেক করে তারপর ডেলিভারিম্যানকে টাকা দিন।
+                </div>
+              )}
             </div>
 
             <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 font-bn">

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Menu, X, MessageCircle, ShoppingBag } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X, MessageCircle, ShoppingBag, MoreVertical, RefreshCw, Share2, Lock } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import logoImg from "@/assets/jeba-logo.jpg";
 
 const links = [
@@ -14,6 +15,27 @@ const links = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const shareSite = async () => {
+    setMenuOpen(false);
+    const url = window.location.origin;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Jeba Shop", text: "প্রিমিয়াম স্পিকার Jeba Shop থেকে", url }); } catch {}
+    } else {
+      navigator.clipboard.writeText(url);
+      alert("লিংক কপি হয়েছে!");
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -69,13 +91,49 @@ export function Navbar() {
           </a>
         </div>
 
-        <button
-          className="lg:hidden p-2 glass rounded-lg"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-1">
+          {/* 3-dot menu — always visible */}
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="p-2 rounded-full hover:bg-muted transition"
+              aria-label="More options"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-52 glass-strong rounded-xl shadow-card border border-border py-1.5 animate-fade-up font-bn z-50">
+                <button
+                  onClick={() => { setMenuOpen(false); window.location.reload(); }}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <RefreshCw className="w-4 h-4 text-primary" /> রিলোড
+                </button>
+                <button
+                  onClick={shareSite}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <Share2 className="w-4 h-4 text-primary" /> শেয়ার ওয়েবসাইট
+                </button>
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+                >
+                  <Lock className="w-4 h-4 text-primary" /> অ্যাডমিন লগইন
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <button
+            className="lg:hidden p-2 glass rounded-lg"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Menu"
+          >
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
