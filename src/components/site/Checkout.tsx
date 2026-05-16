@@ -11,18 +11,18 @@ import {
 } from "@/components/ui/dialog";
 
 const paymentMethods = [
-  { id: "cod", label: "ক্যাশ অন ডেলিভারি" },
-  { id: "bkash", label: "বিকাশ" },
-  { id: "nagad", label: "নগদ" },
-  { id: "rocket", label: "রকেট" },
-  { id: "sslcommerz", label: "SSLCommerz" },
+  { id: "cod", label: "ক্যাশ অন ডেলিভারি", sub: "প্রোডাক্ট হাতে পেয়ে টাকা দিন", emoji: "💵" },
+  { id: "bkash", label: "বিকাশ", sub: "Send Money", emoji: "🟣", color: "#E2136E" },
+  { id: "nagad", label: "নগদ", sub: "Send Money", emoji: "🟧", color: "#EE1C25" },
 ];
 
 const colorBn: Record<string, string> = {
-  Red: "লাল",
-  Blue: "নীল",
-  Black: "কালো",
-  Green: "সবুজ",
+  Red: "লাল (RED)",
+  Blue: "নীল (BLUE)",
+  Black: "কালো (BLACK)",
+  Green: "সবুজ (GREEN)",
+  Military: "মিলিটারি",
+  "Classic Navy Blue": "নেভি ব্লু",
 };
 
 export function Checkout() {
