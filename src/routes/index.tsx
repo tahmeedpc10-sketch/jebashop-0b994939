@@ -15,15 +15,14 @@ import { products } from "@/lib/products";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Jeba Shop — Premium Speakers & Electronics in Bangladesh" },
+      { title: "Jeba Shop — প্রিমিয়াম স্পিকার ও ইলেকট্রনিক্স বাংলাদেশ" },
       {
         name: "description",
         content:
-          "অরিজিনাল প্রিমিয়াম স্পিকার ও ইলেকট্রনিক্স কিনুন Jeba Shop থেকে। Cash on Delivery, ৬ মাস গ্যারান্টি, সারা বাংলাদেশে ফাস্ট ডেলিভারি।",
+          "অরিজিনাল প্রিমিয়াম স্পিকার ও ইলেকট্রনিক্স কিনুন Jeba Shop থেকে। ক্যাশ অন ডেলিভারি, ৬ মাস গ্যারান্টি, সারা বাংলাদেশে ফাস্ট ডেলিভারি।",
       },
-      { name: "keywords", content: "JBL, speaker, Bangladesh, ecommerce, bluetooth speaker, Jeba Shop, sound box" },
-      { property: "og:title", content: "Jeba Shop — Premium Speakers in Bangladesh" },
-      { property: "og:description", content: "প্রিমিয়াম সাউন্ড এক্সপেরিয়েন্স এখন আপনার হাতে। Cash on Delivery." },
+      { property: "og:title", content: "Jeba Shop — প্রিমিয়াম স্পিকার বাংলাদেশ" },
+      { property: "og:description", content: "প্রিমিয়াম সাউন্ড এক্সপেরিয়েন্স এখন আপনার হাতে। ক্যাশ অন ডেলিভারি।" },
       { property: "og:type", content: "website" },
     ],
     links: [
@@ -31,7 +30,7 @@ export const Route = createFileRoute("/")({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap",
       },
       { rel: "canonical", href: "/" },
     ],
@@ -47,15 +46,16 @@ function Index() {
         <Hero />
         <Trust />
 
-        <section id="products" className="py-16 md:py-20 scroll-mt-20">
+        <section id="products" className="py-14 md:py-20 scroll-mt-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="text-center mb-14">
-              <span className="text-xs font-semibold uppercase tracking-widest text-gold">Products</span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold mt-2">
-                Featured <span className="gold-text">Speakers</span>
+            <div className="text-center mb-12">
+              <span className="text-xs font-semibold uppercase tracking-widest text-primary font-bn">আমাদের প্রোডাক্ট</span>
+              <h2 className="font-display text-3xl md:text-5xl font-bold mt-2 font-bn">
+                ফিচার্ড <span className="text-primary">স্পিকার</span>
               </h2>
+              <p className="font-bn mt-3 text-muted-foreground">পছন্দের প্রোডাক্ট সিলেক্ট করে এখনই অর্ডার করুন</p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               {products.map((p) => (
                 <ProductShowcase key={p.id} product={p} />
               ))}
@@ -64,9 +64,9 @@ function Index() {
         </section>
 
         <Checkout />
+        <Delivery />
         <Warranty />
         <Reviews />
-        <Delivery />
         <Faq />
       </main>
       <Footer />
