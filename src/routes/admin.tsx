@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search } from "lucide-react";
+import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2 } from "lucide-react";
 import { getOrders, updateOrderStatus, deleteOrder, type Order } from "@/lib/orders";
+import { supabase } from "@/integrations/supabase/client";
 
-const ADMIN_USER = "JEBASHOP01";
-const ADMIN_PASS = "987654321";
-const AUTH_KEY = "jeba:admin-auth";
+const ADMIN_USERNAME = "JEBASHOP01";
+const ADMIN_EMAIL = "jebashop01@jeba.shop";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -22,27 +22,39 @@ function AdminPage() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    setAuthed(sessionStorage.getItem(AUTH_KEY) === "1");
-    setChecked(true);
+    supabase.auth.getSession().then(({ data }) => {
+      setAuthed(!!data.session);
+      setChecked(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAuthed(!!session);
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   if (!checked) return null;
-  if (!authed) return <Login onLogin={() => setAuthed(true)} />;
-  return <Dashboard onLogout={() => { sessionStorage.removeItem(AUTH_KEY); setAuthed(false); }} />;
+  if (!authed) return <Login />;
+  return <Dashboard onLogout={async () => { await supabase.auth.signOut(); }} />;
 }
 
-function Login({ onLogin }: { onLogin: () => void }) {
+function Login() {
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     const fd = new FormData(e.currentTarget);
-    if (fd.get("user") === ADMIN_USER && fd.get("pass") === ADMIN_PASS) {
-      sessionStorage.setItem(AUTH_KEY, "1");
-      onLogin();
-    } else {
-      setError("ভুল ইউজারনেম অথবা পাসওয়ার্ড");
-    }
+    const user = String(fd.get("user") || "").trim();
+    const pass = String(fd.get("pass") || "");
+
+    // Map the JEBASHOP01 username to the seeded admin email.
+    const email = user.toUpperCase() === ADMIN_USERNAME ? ADMIN_EMAIL : user;
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) setError("ভুল ইউজারনেম অথবা পাসওয়ার্ড");
+    setLoading(false);
   };
 
   return (
@@ -56,7 +68,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
         <label className="block mt-6">
           <span className="text-sm font-medium font-bn">ইউজারনেম</span>
-          <input name="user" required className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          <input name="user" required defaultValue="" className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </label>
         <label className="block mt-4">
           <span className="text-sm font-medium font-bn">পাসওয়ার্ড</span>
@@ -65,7 +77,8 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
         {error && <p className="text-sm text-red-500 mt-3 font-bn">{error}</p>}
 
-        <button type="submit" className="mt-6 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-gold hover:scale-[1.02] transition font-bn">
+        <button type="submit" disabled={loading} className="mt-6 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-gold hover:scale-[1.02] transition font-bn inline-flex items-center justify-center gap-2 disabled:opacity-60">
+          {loading && <Loader2 className="w-4 h-4 animate-spin" />}
           লগইন করুন
         </button>
       </form>
@@ -75,10 +88,20 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Order["status"]>("all");
 
-  const refresh = () => setOrders(getOrders());
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      setOrders(await getOrders());
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => { refresh(); }, []);
 
   const stats = useMemo(() => {
@@ -97,8 +120,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     return [o.name, o.phone, o.id, o.jela, o.thana, o.productName].some(v => v.toLowerCase().includes(q));
   });
 
-  const setStatus = (id: string, s: Order["status"]) => { updateOrderStatus(id, s); refresh(); };
-  const remove = (id: string) => { if (confirm("এই অর্ডারটি ডিলিট করবেন?")) { deleteOrder(id); refresh(); } };
+  const setStatus = async (id: string, s: Order["status"]) => { await updateOrderStatus(id, s); refresh(); };
+  const remove = async (id: string) => { if (confirm("এই অর্ডারটি ডিলিট করবেন?")) { await deleteOrder(id); refresh(); } };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -121,7 +144,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 font-bn">
           <Stat label="মোট অর্ডার" value={stats.total} />
           <Stat label="পেন্ডিং" value={stats.pending} tone="amber" />
@@ -130,7 +152,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <Stat label="মোট রেভিনিউ" value={`৳${stats.revenue.toLocaleString("en-BD")}`} tone="primary" />
         </div>
 
-        {/* Controls */}
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -157,8 +178,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         </div>
 
-        {/* Orders */}
-        {visible.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border inline-flex items-center justify-center gap-2 w-full">
+            <Loader2 className="w-4 h-4 animate-spin" /> লোড হচ্ছে...
+          </div>
+        ) : visible.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border">
             কোনো অর্ডার পাওয়া যায়নি
           </div>
@@ -169,7 +193,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-xs px-2 py-1 rounded bg-muted">{o.id}</span>
+                      <span className="font-mono text-xs px-2 py-1 rounded bg-muted">JEBA-{o.id.slice(0, 8).toUpperCase()}</span>
                       <StatusBadge status={o.status} />
                       <span className="text-xs text-muted-foreground font-bn">
                         {new Date(o.createdAt).toLocaleString("bn-BD")}
