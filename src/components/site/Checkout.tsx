@@ -61,34 +61,35 @@ export function Checkout() {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
-    const id = "JEBA-" + Date.now().toString().slice(-6);
+    const form = e.currentTarget;
 
-    saveOrder({
-      id,
-      createdAt: Date.now(),
-      name: String(fd.get("name") || ""),
-      phone: String(fd.get("phone") || ""),
-      jela: String(fd.get("jela") || ""),
-      thana: String(fd.get("thana") || ""),
-      union: String(fd.get("union") || ""),
-      gram: String(fd.get("gram") || ""),
-      productId: product.id,
-      productName: product.name,
-      color: selectedColor,
-      qty,
-      payment,
-      subtotal,
-      delivery,
-      total,
-      status: "pending",
-    });
-
-    setOrderId(id);
-    await new Promise((r) => setTimeout(r, 700));
-    setLoading(false);
-    setOpen(true);
-    (e.target as HTMLFormElement).reset();
-    setQty(1);
+    try {
+      const saved = await saveOrder({
+        name: String(fd.get("name") || ""),
+        phone: String(fd.get("phone") || ""),
+        jela: String(fd.get("jela") || ""),
+        thana: String(fd.get("thana") || ""),
+        union: String(fd.get("union") || ""),
+        gram: String(fd.get("gram") || ""),
+        productId: product.id,
+        productName: product.name,
+        color: selectedColor,
+        qty,
+        payment,
+        subtotal,
+        delivery,
+        total,
+      });
+      setOrderId("JEBA-" + saved.id.slice(0, 8).toUpperCase());
+      setOpen(true);
+      form.reset();
+      setQty(1);
+    } catch (err) {
+      console.error(err);
+      alert("অর্ডার সাবমিট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
