@@ -156,6 +156,20 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <Stat label="মোট রেভিনিউ" value={`৳${stats.revenue.toLocaleString("en-BD")}`} tone="primary" />
         </div>
 
+        <div className="flex gap-2 font-bn text-sm">
+          <button
+            onClick={() => setTab("orders")}
+            className={`px-4 py-2 rounded-lg border inline-flex items-center gap-1.5 ${tab === "orders" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+          >
+            <Package className="w-4 h-4" /> অর্ডার ({orders.length})
+          </button>
+          <button
+            onClick={() => setTab("audit")}
+            className={`px-4 py-2 rounded-lg border inline-flex items-center gap-1.5 ${tab === "audit" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+          >
+            <History className="w-4 h-4" /> অডিট লগ ({audit.length})
+          </button>
+
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
