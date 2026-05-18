@@ -97,7 +97,7 @@ export function Checkout() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="text-center mb-10">
           <span className="text-xs font-semibold uppercase tracking-widest text-primary font-bn">দ্রুত অর্ডার</span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mt-2 font-bn">সহজ চেকআউট</h2>
+          <h2 className="font-display text-3xl md:text-5xl font-bold mt-2 font-bn">এখনই অর্ডার করুন</h2>
           <p className="font-bn mt-3 text-muted-foreground">
             প্রোডাক্ট হাতে পেয়ে চেক করে তারপর টাকা দিন
           </p>
