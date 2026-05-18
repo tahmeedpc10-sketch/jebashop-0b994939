@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2 } from "lucide-react";
-import { getOrders, updateOrderStatus, deleteOrder, type Order } from "@/lib/orders";
+import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
+import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_USERNAME = "JEBASHOP01";
