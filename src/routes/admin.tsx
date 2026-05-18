@@ -169,6 +169,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           >
             <History className="w-4 h-4" /> অডিট লগ ({audit.length})
           </button>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="relative flex-1">
