@@ -197,6 +197,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ))}
           </div>
         </div>
+        )}
+
+        {tab === "orders" && (<>
+
 
         {loading ? (
           <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border inline-flex items-center justify-center gap-2 w-full">
