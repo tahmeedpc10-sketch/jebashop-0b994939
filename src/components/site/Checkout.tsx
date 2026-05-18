@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Check, Loader2, ShieldCheck, Truck, Wallet, BadgeCheck } from "lucide-react";
 import { products } from "@/lib/products";
-import { saveOrder } from "@/lib/orders";
+import { placeOrder } from "@/lib/place-order.functions";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ const colorBn: Record<string, string> = {
 };
 
 export function Checkout() {
+  const submitOrder = useServerFn(placeOrder);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [payment, setPayment] = useState("cod");
@@ -64,21 +66,19 @@ export function Checkout() {
     const form = e.currentTarget;
 
     try {
-      const saved = await saveOrder({
-        name: String(fd.get("name") || ""),
-        phone: String(fd.get("phone") || ""),
-        jela: String(fd.get("jela") || ""),
-        thana: String(fd.get("thana") || ""),
-        union: String(fd.get("union") || ""),
-        gram: String(fd.get("gram") || ""),
-        productId: product.id,
-        productName: product.name,
-        color: selectedColor,
-        qty,
-        payment,
-        subtotal,
-        delivery,
-        total,
+      const saved = await submitOrder({
+        data: {
+          name: String(fd.get("name") || ""),
+          phone: String(fd.get("phone") || ""),
+          jela: String(fd.get("jela") || ""),
+          thana: String(fd.get("thana") || ""),
+          union: String(fd.get("union") || ""),
+          gram: String(fd.get("gram") || ""),
+          productId: product.id,
+          color: selectedColor,
+          qty,
+          payment: payment as "cod" | "bkash" | "nagad",
+        },
       });
       setOrderId("JEBA-" + saved.id.slice(0, 8).toUpperCase());
       setOpen(true);
