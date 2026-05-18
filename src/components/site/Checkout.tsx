@@ -66,21 +66,19 @@ export function Checkout() {
     const form = e.currentTarget;
 
     try {
-      const saved = await saveOrder({
-        name: String(fd.get("name") || ""),
-        phone: String(fd.get("phone") || ""),
-        jela: String(fd.get("jela") || ""),
-        thana: String(fd.get("thana") || ""),
-        union: String(fd.get("union") || ""),
-        gram: String(fd.get("gram") || ""),
-        productId: product.id,
-        productName: product.name,
-        color: selectedColor,
-        qty,
-        payment,
-        subtotal,
-        delivery,
-        total,
+      const saved = await submitOrder({
+        data: {
+          name: String(fd.get("name") || ""),
+          phone: String(fd.get("phone") || ""),
+          jela: String(fd.get("jela") || ""),
+          thana: String(fd.get("thana") || ""),
+          union: String(fd.get("union") || ""),
+          gram: String(fd.get("gram") || ""),
+          productId: product.id,
+          color: selectedColor,
+          qty,
+          payment: payment as "cod" | "bkash" | "nagad",
+        },
       });
       setOrderId("JEBA-" + saved.id.slice(0, 8).toUpperCase());
       setOpen(true);
