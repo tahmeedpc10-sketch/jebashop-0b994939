@@ -88,14 +88,18 @@ function Login() {
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [audit, setAudit] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Order["status"]>("all");
+  const [tab, setTab] = useState<"orders" | "audit">("orders");
 
   const refresh = async () => {
     setLoading(true);
     try {
-      setOrders(await getOrders());
+      const [o, a] = await Promise.all([getOrders(), getAuditLog(200)]);
+      setOrders(o);
+      setAudit(a);
     } catch (e) {
       console.error(e);
     } finally {
