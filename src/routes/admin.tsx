@@ -282,6 +282,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ))}
           </div>
         )}
+        </>)}
+
+        {tab === "audit" && <AuditPanel entries={audit} loading={loading} />}
       </main>
     </div>
   );
