@@ -27,6 +27,7 @@ const colorBn: Record<string, string> = {
 };
 
 export function Checkout() {
+  const submitOrder = useServerFn(placeOrder);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [payment, setPayment] = useState("cod");
