@@ -107,3 +107,43 @@ export async function deleteOrder(id: string) {
   const { error } = await supabase.from("orders").delete().eq("id", id);
   if (error) throw error;
 }
+
+export type AuditEntry = {
+  id: string;
+  orderId: string;
+  action: string;
+  actorEmail: string | null;
+  createdAt: number;
+  oldStatus?: string | null;
+  newStatus?: string | null;
+  productName?: string | null;
+  customerName?: string | null;
+  total?: number | null;
+};
+
+export async function getAuditLog(limit = 100): Promise<AuditEntry[]> {
+  const { data, error } = await supabase
+    .from("order_audit_log")
+    .select("id, order_id, action, actor_email, created_at, old_data, new_data")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []).map((r) => {
+    const nd = (r.new_data as Record<string, unknown> | null) ?? null;
+    const od = (r.old_data as Record<string, unknown> | null) ?? null;
+    const pick = (k: string) => (nd?.[k] ?? od?.[k]) as string | number | null | undefined;
+    return {
+      id: r.id as string,
+      orderId: r.order_id as string,
+      action: r.action as string,
+      actorEmail: (r.actor_email as string | null) ?? null,
+      createdAt: new Date(r.created_at as string).getTime(),
+      oldStatus: (od?.status as string | null) ?? null,
+      newStatus: (nd?.status as string | null) ?? null,
+      productName: (pick("product_name") as string) ?? null,
+      customerName: (pick("name") as string) ?? null,
+      total: (pick("total") as number) ?? null,
+    };
+  });
+}
+

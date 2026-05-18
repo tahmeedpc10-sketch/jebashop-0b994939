@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2 } from "lucide-react";
-import { getOrders, updateOrderStatus, deleteOrder, type Order } from "@/lib/orders";
+import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
+import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_USERNAME = "JEBASHOP01";
@@ -88,14 +88,18 @@ function Login() {
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [audit, setAudit] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Order["status"]>("all");
+  const [tab, setTab] = useState<"orders" | "audit">("orders");
 
   const refresh = async () => {
     setLoading(true);
     try {
-      setOrders(await getOrders());
+      const [o, a] = await Promise.all([getOrders(), getAuditLog(200)]);
+      setOrders(o);
+      setAudit(a);
     } catch (e) {
       console.error(e);
     } finally {
@@ -152,6 +156,22 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <Stat label="মোট রেভিনিউ" value={`৳${stats.revenue.toLocaleString("en-BD")}`} tone="primary" />
         </div>
 
+        <div className="flex gap-2 font-bn text-sm">
+          <button
+            onClick={() => setTab("orders")}
+            className={`px-4 py-2 rounded-lg border inline-flex items-center gap-1.5 ${tab === "orders" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+          >
+            <Package className="w-4 h-4" /> অর্ডার ({orders.length})
+          </button>
+          <button
+            onClick={() => setTab("audit")}
+            className={`px-4 py-2 rounded-lg border inline-flex items-center gap-1.5 ${tab === "audit" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+          >
+            <History className="w-4 h-4" /> অডিট লগ ({audit.length})
+          </button>
+        </div>
+
+        {tab === "orders" && (
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -177,6 +197,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ))}
           </div>
         </div>
+        )}
+
+        {tab === "orders" && (<>
+
 
         {loading ? (
           <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border inline-flex items-center justify-center gap-2 w-full">
@@ -258,6 +282,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ))}
           </div>
         )}
+        </>)}
+
+        {tab === "audit" && <AuditPanel entries={audit} loading={loading} />}
       </main>
     </div>
   );
@@ -288,3 +315,58 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   }[status];
   return <span className={`text-xs px-2 py-0.5 rounded-full font-bn font-medium ${map.c}`}>{map.l}</span>;
 }
+
+function AuditPanel({ entries, loading }: { entries: AuditEntry[]; loading: boolean }) {
+  const actionMap: Record<string, { l: string; c: string }> = {
+    created: { l: "তৈরি", c: "bg-emerald-100 text-emerald-700" },
+    status_changed: { l: "স্ট্যাটাস পরিবর্তন", c: "bg-blue-100 text-blue-700" },
+    updated: { l: "আপডেট", c: "bg-amber-100 text-amber-700" },
+    deleted: { l: "ডিলিট", c: "bg-red-100 text-red-700" },
+  };
+  if (loading) {
+    return (
+      <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border inline-flex items-center justify-center gap-2 w-full">
+        <Loader2 className="w-4 h-4 animate-spin" /> লোড হচ্ছে...
+      </div>
+    );
+  }
+  if (entries.length === 0) {
+    return (
+      <div className="text-center py-20 text-muted-foreground font-bn bg-card rounded-2xl border border-border">
+        কোনো অডিট লগ নেই
+      </div>
+    );
+  }
+  return (
+    <div className="grid gap-2">
+      {entries.map((e) => {
+        const a = actionMap[e.action] ?? { l: e.action, c: "bg-muted text-foreground" };
+        return (
+          <article key={e.id} className="bg-card rounded-xl border border-border p-3 md:p-4 text-sm font-bn">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.c}`}>{a.l}</span>
+              <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted">JEBA-{e.orderId.slice(0, 8).toUpperCase()}</span>
+              {e.customerName && <span className="font-semibold">{e.customerName}</span>}
+              {e.productName && <span className="text-muted-foreground text-xs">• {e.productName}</span>}
+              {e.total != null && <span className="text-primary font-semibold text-xs">৳{e.total.toLocaleString("en-BD")}</span>}
+              <span className="text-xs text-muted-foreground ml-auto">
+                {new Date(e.createdAt).toLocaleString("bn-BD")}
+              </span>
+            </div>
+            <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {e.action === "status_changed" && (
+                <span>
+                  স্ট্যাটাস: <b className="text-foreground">{e.oldStatus}</b> → <b className="text-foreground">{e.newStatus}</b>
+                </span>
+              )}
+              <span>
+                অ্যাডমিন: <b className="text-foreground">{e.actorEmail ?? "system / customer"}</b>
+              </span>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
