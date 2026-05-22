@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
 import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
+import { verifyAdmin } from "@/lib/admin.functions";
 
 const ADMIN_USERNAME = "JEBASHOP01";
 const ADMIN_EMAIL = "jebashop01@jeba.shop";
@@ -18,26 +20,61 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminPage() {
-  const [authed, setAuthed] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const checkAdmin = useServerFn(verifyAdmin);
+  const [state, setState] = useState<"checking" | "login" | "ready">("checking");
+  const [permError, setPermError] = useState("");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setAuthed(!!data.session);
-      setChecked(true);
-    });
+    let cancelled = false;
+    const verify = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        if (!cancelled) setState("login");
+        return;
+      }
+      try {
+        const res = await checkAdmin();
+        if (cancelled) return;
+        if (res.isAdmin) {
+          setPermError("");
+          setState("ready");
+        } else {
+          await supabase.auth.signOut();
+          setPermError("এই অ্যাকাউন্টে অ্যাডমিন অনুমতি নেই");
+          setState("login");
+        }
+      } catch {
+        await supabase.auth.signOut();
+        if (!cancelled) setState("login");
+      }
+    };
+    verify();
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setAuthed(!!session);
+      if (!session) {
+        setState("login");
+      } else {
+        setState("checking");
+        verify();
+      }
     });
-    return () => sub.subscription.unsubscribe();
-  }, []);
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, [checkAdmin]);
 
-  if (!checked) return null;
-  if (!authed) return <Login />;
+  if (state === "checking") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground font-bn">
+        <Loader2 className="w-5 h-5 animate-spin mr-2" /> যাচাই করা হচ্ছে...
+      </div>
+    );
+  }
+  if (state === "login") return <Login permError={permError} />;
   return <Dashboard onLogout={async () => { await supabase.auth.signOut(); }} />;
 }
 
-function Login() {
+function Login({ permError }: { permError?: string }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -65,6 +102,8 @@ function Login() {
         </div>
         <h1 className="text-center text-2xl font-bold font-bn">অ্যাডমিন লগইন</h1>
         <p className="text-center text-sm text-muted-foreground mt-1 font-bn">Jeba Shop ড্যাশবোর্ড</p>
+
+        {permError && <p className="text-sm text-red-500 mt-4 text-center font-bn">{permError}</p>}
 
         <label className="block mt-6">
           <span className="text-sm font-medium font-bn">ইউজারনেম</span>
