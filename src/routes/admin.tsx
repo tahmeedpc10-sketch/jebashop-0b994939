@@ -1,10 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
 import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
-import { verifyAdmin } from "@/lib/admin.functions";
 
 const ADMIN_USERNAME = "JEBASHOP01";
 const ADMIN_EMAIL = "jebashop01@jeba.shop";
@@ -19,8 +17,19 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+async function checkIsAdmin(userId: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (error) {
+    console.error("has_role error", error);
+    return false;
+  }
+  return !!data;
+}
+
 function AdminPage() {
-  const checkAdmin = useServerFn(verifyAdmin);
   const [state, setState] = useState<"checking" | "login" | "ready">("checking");
   const [permError, setPermError] = useState("");
 
@@ -32,36 +41,27 @@ function AdminPage() {
         if (!cancelled) setState("login");
         return;
       }
-      try {
-        const res = await checkAdmin();
-        if (cancelled) return;
-        if (res.isAdmin) {
-          setPermError("");
-          setState("ready");
-        } else {
-          await supabase.auth.signOut();
-          setPermError("এই অ্যাকাউন্টে অ্যাডমিন অনুমতি নেই");
-          setState("login");
-        }
-      } catch {
+      const ok = await checkIsAdmin(data.session.user.id);
+      if (cancelled) return;
+      if (ok) {
+        setPermError("");
+        setState("ready");
+      } else {
         await supabase.auth.signOut();
-        if (!cancelled) setState("login");
+        setPermError("এই অ্যাকাউন্টে অ্যাডমিন অনুমতি নেই");
+        setState("login");
       }
     };
     verify();
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) {
-        setState("login");
-      } else {
-        setState("checking");
-        verify();
-      }
+      if (!session) setState("login");
+      else verify();
     });
     return () => {
       cancelled = true;
       sub.subscription.unsubscribe();
     };
-  }, [checkAdmin]);
+  }, []);
 
   if (state === "checking") {
     return (
