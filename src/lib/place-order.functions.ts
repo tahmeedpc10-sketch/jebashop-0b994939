@@ -48,7 +48,7 @@ export const placeOrder = createServerFn({ method: "POST" })
         phone: data.phone,
         jela: data.jela,
         thana: data.thana,
-        union_name: data.union,
+        union_name: data.union || null,
         gram: data.gram,
         product_id: data.productId,
         product_name: product.name,
