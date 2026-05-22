@@ -290,7 +290,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     </div>
                     <div>জেলা: <b>{o.jela}</b></div>
                     <div>থানা: <b>{o.thana}</b></div>
-                    <div>ইউনিয়ন: <b>{o.union}</b></div>
+                    {o.union && <div>ইউনিয়ন: <b>{o.union}</b></div>}
                     <div>গ্রাম: <b>{o.gram}</b></div>
                   </div>
                 </div>
