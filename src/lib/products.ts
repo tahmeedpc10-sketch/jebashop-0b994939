@@ -19,7 +19,7 @@ export const products: Product[] = [
     tagline: "ছোট সাইজ, কিন্তু সাউন্ডে পুরো আগুন!",
     description:
       "পার্টি, ট্রাভেল কিংবা আড্ডা — সবকিছুর জন্য পারফেক্ট স্পিকার। কম্প্যাক্ট ডিজাইনের সাথে পাওয়ারফুল সাউন্ড।",
-    price: 1690,
+    price: 1590,
     oldPrice: 2500,
     images: [p192_1, p192_2, p192_3, p192_4, p192_5, p192_6],
     features: [
@@ -45,7 +45,7 @@ export const products: Product[] = [
     tagline: "হেভি বেস + ক্লিয়ার সাউন্ড",
     description:
       "ট্রাভেল, পার্টি, আড্ডা — সব জায়গায় জমিয়ে দেবে আপনার মুড। ডাবল হর্ন আর ৪০০০mAh ব্যাটারি।",
-    price: 1390,
+    price: 1290,
     oldPrice: 1600,
     images: [et312_1, et312_2, et312_3, et312_4],
     features: [

@@ -3,12 +3,12 @@
 export const PRODUCT_CATALOG = {
   "jbl-xtreme-p192": {
     name: "JBL Xtreme P192 Speaker",
-    price: 1690,
+    price: 1590,
     colors: ["Military", "Classic Navy Blue", "Black", "Red"] as const,
   },
   "et-312": {
     name: "ET 312 Sound Box",
-    price: 1390,
+    price: 1290,
     colors: ["Red", "Blue", "Black", "Green"] as const,
   },
 } as const;
