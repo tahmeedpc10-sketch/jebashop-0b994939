@@ -145,7 +145,15 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       setLoading(false);
     }
   };
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => {
+    refresh();
+    const channel = supabase
+      .channel("admin-orders")
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => refresh())
+      .on("postgres_changes", { event: "*", schema: "public", table: "order_audit_log" }, () => refresh())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const stats = useMemo(() => {
     const total = orders.length;
