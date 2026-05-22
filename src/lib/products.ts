@@ -45,7 +45,7 @@ export const products: Product[] = [
     tagline: "হেভি বেস + ক্লিয়ার সাউন্ড",
     description:
       "ট্রাভেল, পার্টি, আড্ডা — সব জায়গায় জমিয়ে দেবে আপনার মুড। ডাবল হর্ন আর ৪০০০mAh ব্যাটারি।",
-    price: 1390,
+    price: 1290,
     oldPrice: 1600,
     images: [et312_1, et312_2, et312_3, et312_4],
     features: [
