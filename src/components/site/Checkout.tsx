@@ -110,8 +110,7 @@ export function Checkout() {
 
             <Field label="জেলা *" name="jela" placeholder="যেমনঃ ঢাকা" required />
             <Field label="থানা / উপজেলা *" name="thana" placeholder="যেমনঃ সাভার" required />
-            <Field label="ইউনিয়ন *" name="union" placeholder="যেমনঃ আশুলিয়া" required />
-            <Field label="গ্রাম / বাসা ও রোড *" name="gram" placeholder="বিস্তারিত ঠিকানা" required />
+            <Field label="গ্রাম / বাসা ও রোড *" name="gram" placeholder="বিস্তারিত ঠিকানা" full required />
 
             <Select
               label="প্রোডাক্ট *"
