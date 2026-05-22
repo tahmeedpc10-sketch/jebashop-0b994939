@@ -72,7 +72,7 @@ export function Checkout() {
           phone: String(fd.get("phone") || ""),
           jela: String(fd.get("jela") || ""),
           thana: String(fd.get("thana") || ""),
-          union: String(fd.get("union") || ""),
+          union: "",
           gram: String(fd.get("gram") || ""),
           productId: product.id,
           color: selectedColor,
