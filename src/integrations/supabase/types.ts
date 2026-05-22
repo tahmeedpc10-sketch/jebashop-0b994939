@@ -66,7 +66,7 @@ export type Database = {
           thana: string
           total: number
           txn_id: string | null
-          union_name: string
+          union_name: string | null
         }
         Insert: {
           color: string
@@ -86,7 +86,7 @@ export type Database = {
           thana: string
           total: number
           txn_id?: string | null
-          union_name: string
+          union_name?: string | null
         }
         Update: {
           color?: string
@@ -106,7 +106,7 @@ export type Database = {
           thana?: string
           total?: number
           txn_id?: string | null
-          union_name?: string
+          union_name?: string | null
         }
         Relationships: []
       }
