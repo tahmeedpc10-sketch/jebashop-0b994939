@@ -17,7 +17,7 @@ const schema = z.object({
     .regex(/^[0-9+\-\s]+$/, "Invalid phone"),
   jela: z.string().trim().min(1).max(80),
   thana: z.string().trim().min(1).max(80),
-  union: z.string().trim().min(1).max(80),
+  union: z.string().trim().max(80).optional().default(""),
   gram: z.string().trim().min(1).max(300),
   productId: z.enum(
     Object.keys(PRODUCT_CATALOG) as [string, ...string[]],
