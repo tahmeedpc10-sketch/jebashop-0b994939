@@ -65,13 +65,7 @@ function AdminPage() {
     };
   }, []);
 
-  if (state === "checking") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-muted-foreground font-bn">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" /> যাচাই করা হচ্ছে...
-      </div>
-    );
-  }
+  if (state === "checking") return <DashboardSkeleton />;
   if (state === "login") return <Login permError={permError} />;
   return <Dashboard onLogout={async () => { await supabase.auth.signOut(); }} />;
 }
