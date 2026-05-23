@@ -66,28 +66,38 @@ function AdminPage() {
   }, []);
 
   if (state === "checking") return <DashboardSkeleton />;
-  if (state === "login") return <Login permError={permError} />;
+  if (state === "login") return <Login permError={permError} onSuccess={() => setState("checking")} />;
   return <Dashboard onLogout={async () => { await supabase.auth.signOut(); }} />;
 }
 
-function Login({ permError }: { permError?: string }) {
+function Login({ permError, onSuccess }: { permError?: string; onSuccess: () => void }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
     const fd = new FormData(e.currentTarget);
     const user = String(fd.get("user") || "").trim();
     const pass = String(fd.get("pass") || "");
+
+    if (!user || !pass) {
+      setError("ইউজারনেম ও পাসওয়ার্ড দিন");
+      return;
+    }
+    setLoading(true);
 
     // Map the JEBASHOP01 username to the seeded admin email.
     const email = user.toUpperCase() === ADMIN_USERNAME ? ADMIN_EMAIL : user;
 
     const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-    if (error) setError("ভুল ইউজারনেম অথবা পাসওয়ার্ড");
-    setLoading(false);
+    if (error) {
+      setError("ভুল ইউজারনেম অথবা পাসওয়ার্ড");
+      setLoading(false);
+      return;
+    }
+    // Immediately move parent to checking so the form doesn't linger.
+    onSuccess();
   };
 
   return (
@@ -103,18 +113,18 @@ function Login({ permError }: { permError?: string }) {
 
         <label className="block mt-6">
           <span className="text-sm font-medium font-bn">ইউজারনেম</span>
-          <input name="user" required defaultValue="" className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          <input name="user" required autoComplete="username" defaultValue="" className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </label>
         <label className="block mt-4">
           <span className="text-sm font-medium font-bn">পাসওয়ার্ড</span>
-          <input name="pass" type="password" required className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          <input name="pass" type="password" required autoComplete="current-password" className="mt-1.5 w-full px-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </label>
 
-        {error && <p className="text-sm text-red-500 mt-3 font-bn">{error}</p>}
+        {error && <p className="text-sm text-red-500 mt-3 font-bn text-center">{error}</p>}
 
         <button type="submit" disabled={loading} className="mt-6 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-gold hover:scale-[1.02] transition font-bn inline-flex items-center justify-center gap-2 disabled:opacity-60">
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          লগইন করুন
+          {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
         </button>
       </form>
     </div>
