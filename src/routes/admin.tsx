@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
 import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 const ADMIN_USERNAME = "JEBASHOP01";
 const ADMIN_EMAIL = "jebashop01@jeba.shop";
@@ -63,13 +65,7 @@ function AdminPage() {
     };
   }, []);
 
-  if (state === "checking") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-muted-foreground font-bn">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" /> যাচাই করা হচ্ছে...
-      </div>
-    );
-  }
+  if (state === "checking") return <DashboardSkeleton />;
   if (state === "login") return <Login permError={permError} />;
   return <Dashboard onLogout={async () => { await supabase.auth.signOut(); }} />;
 }
@@ -124,6 +120,101 @@ function Login({ permError }: { permError?: string }) {
     </div>
   );
 }
+
+function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen bg-muted/30 animate-pulse">
+      {/* Header skeleton */}
+      <header className="bg-card border-b border-border sticky top-0 z-30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-9 h-9 rounded-lg" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-3 w-20 rounded" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-9 h-9 rounded-lg" />
+            <Skeleton className="w-20 h-9 rounded-lg" />
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
+        {/* Stats skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="bg-card rounded-2xl border border-border p-4 space-y-3">
+              <Skeleton className="h-3 w-16 rounded" />
+              <Skeleton className="h-8 w-20 rounded" />
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs skeleton */}
+        <div className="flex gap-2">
+          <Skeleton className="h-9 w-32 rounded-lg" />
+          <Skeleton className="h-9 w-32 rounded-lg" />
+        </div>
+
+        {/* Search + filters skeleton */}
+        <div className="flex flex-col md:flex-row gap-3 md:items-center">
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <div className="flex gap-2 overflow-x-auto">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-20 rounded-lg flex-shrink-0" />
+            ))}
+          </div>
+        </div>
+
+        {/* Order cards skeleton */}
+        <div className="grid gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-card rounded-2xl border border-border p-4 md:p-5 shadow-sm space-y-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Skeleton className="h-5 w-28 rounded" />
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-4 w-32 rounded" />
+                  </div>
+                  <Skeleton className="h-6 w-40 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </div>
+                <div className="space-y-2 text-right">
+                  <Skeleton className="h-3 w-12 rounded ml-auto" />
+                  <Skeleton className="h-8 w-24 rounded ml-auto" />
+                  <Skeleton className="h-3 w-16 rounded ml-auto" />
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-3">
+                <div className="rounded-lg bg-muted/60 p-3 space-y-2">
+                  <Skeleton className="h-3 w-20 rounded" />
+                  <Skeleton className="h-5 w-40 rounded" />
+                  <Skeleton className="h-3 w-56 rounded" />
+                </div>
+                <div className="rounded-lg bg-muted/60 p-3 space-y-2">
+                  <Skeleton className="h-3 w-20 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                  <Skeleton className="h-4 w-28 rounded" />
+                  <Skeleton className="h-4 w-36 rounded" />
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <Skeleton key={j} className="h-7 w-20 rounded-lg" />
+                ))}
+                <Skeleton className="h-7 w-16 rounded-lg ml-auto" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
