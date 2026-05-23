@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Lock, LogOut, Package, Phone, MapPin, Trash2, RefreshCw, Search, Loader2, History } from "lucide-react";
 import { getOrders, updateOrderStatus, deleteOrder, getAuditLog, type Order, type AuditEntry } from "@/lib/orders";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 const ADMIN_USERNAME = "JEBASHOP01";
 const ADMIN_EMAIL = "jebashop01@jeba.shop";
