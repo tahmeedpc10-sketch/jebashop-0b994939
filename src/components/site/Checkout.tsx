@@ -155,7 +155,7 @@ export function Checkout() {
             />
             <div className="rounded-xl bg-muted border border-border p-4 space-y-1.5 text-sm font-bn">
               <div className="flex justify-between"><span className="text-muted-foreground">প্রোডাক্ট</span><span>৳{subtotal}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">ডেলিভারি</span><span>৳{delivery}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">ডেলিভারি</span><span className="text-emerald-600 font-semibold">ফ্রি</span></div>
               <div className="flex justify-between border-t border-border pt-1.5 font-bold text-base"><span>মোট</span><span className="text-primary">৳{total}</span></div>
             </div>
 
