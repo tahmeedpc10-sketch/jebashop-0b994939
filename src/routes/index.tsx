@@ -42,6 +42,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="min-h-screen relative">
+      <FreeDeliveryBanner />
       <Navbar />
       <main>
         <Hero />
