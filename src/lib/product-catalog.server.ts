@@ -13,6 +13,6 @@ export const PRODUCT_CATALOG = {
   },
 } as const;
 
-export const DELIVERY_FEE = 80;
+export const DELIVERY_FEE = 0;
 export const ALLOWED_PAYMENTS = ["cod", "bkash", "nagad"] as const;
 export type ProductId = keyof typeof PRODUCT_CATALOG;
