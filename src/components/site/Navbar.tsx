@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, MessageCircle, ShoppingBag, MoreVertical, RefreshCw, Share2, Lock } from "lucide-react";
+import { Menu, X, ShoppingBag, MoreVertical, RefreshCw, Share2, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import logoImg from "@/assets/jeba-logo.jpg";
 
