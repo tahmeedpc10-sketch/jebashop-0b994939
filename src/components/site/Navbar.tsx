@@ -46,12 +46,46 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-strong shadow-card" : "bg-background/60 backdrop-blur"
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "glass-strong shadow-card" : "bg-background/80 backdrop-blur"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between h-16 md:h-20">
-        <a href="#home" className="flex items-center gap-2">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between h-16 md:h-20 gap-3">
+        {/* Top-left: 3-dot menu */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="p-2 rounded-full hover:bg-muted transition"
+            aria-label="More options"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </button>
+          {menuOpen && (
+            <div className="absolute left-0 mt-2 w-56 glass-strong rounded-xl shadow-card border border-border py-1.5 animate-fade-up font-bn z-50">
+              <button
+                onClick={() => { setMenuOpen(false); window.location.reload(); }}
+                className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+              >
+                <RefreshCw className="w-4 h-4 text-primary" /> রিফ্রেশ
+              </button>
+              <button
+                onClick={shareSite}
+                className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+              >
+                <Share2 className="w-4 h-4 text-primary" /> শেয়ার
+              </button>
+              <Link
+                to="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
+              >
+                <Lock className="w-4 h-4 text-primary" /> অ্যাডমিন লগইন
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <a href="#home" className="flex items-center gap-2 flex-1">
           <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-foreground flex items-center justify-center">
             <img src={logoImg} alt="Jeba Shop logo" className="w-full h-full object-cover" />
           </div>
@@ -72,68 +106,21 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3 font-bn">
-          <a
-            href="https://wa.me/message/3GYE2UMXBSTKE1"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition"
-          >
-            <MessageCircle className="w-4 h-4" />
-            হোয়াটসঅ্যাপ
-          </a>
-          <a
-            href="#checkout"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-gold hover:scale-105 transition"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            অর্ডার করুন
-          </a>
-        </div>
+        <a
+          href="#checkout"
+          className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-gold hover:scale-105 transition font-bn"
+        >
+          <ShoppingBag className="w-4 h-4" />
+          অর্ডার করুন
+        </a>
 
-        <div className="flex items-center gap-1">
-          {/* 3-dot menu — always visible */}
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setMenuOpen((o) => !o)}
-              className="p-2 rounded-full hover:bg-muted transition"
-              aria-label="More options"
-            >
-              <MoreVertical className="w-5 h-5" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-52 glass-strong rounded-xl shadow-card border border-border py-1.5 animate-fade-up font-bn z-50">
-                <button
-                  onClick={() => { setMenuOpen(false); window.location.reload(); }}
-                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
-                >
-                  <RefreshCw className="w-4 h-4 text-primary" /> রিলোড
-                </button>
-                <button
-                  onClick={shareSite}
-                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
-                >
-                  <Share2 className="w-4 h-4 text-primary" /> শেয়ার ওয়েবসাইট
-                </button>
-                <Link
-                  to="/admin"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full px-4 py-2.5 text-sm flex items-center gap-2.5 hover:bg-muted text-left"
-                >
-                  <Lock className="w-4 h-4 text-primary" /> অ্যাডমিন লগইন
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <button
-            className="lg:hidden p-2 glass rounded-lg"
-            onClick={() => setOpen((o) => !o)}
-            aria-label="Menu"
-          >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        <button
+          className="lg:hidden p-2 glass rounded-lg"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Menu"
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {open && (
