@@ -1,10 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from "./admin-credentials";
 
-// Shared admin credentials (client + server). Kept simple per product requirement.
-export const ADMIN_USERNAME = "JEBASHOP02";
-export const ADMIN_PASSWORD = "0987654321";
 
 const tokenSchema = z.object({
   username: z.string(),
