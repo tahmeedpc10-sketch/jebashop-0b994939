@@ -21,9 +21,8 @@ import {
   adminListOrders,
   adminUpdateOrderStatus,
   adminDeleteOrder,
-  ADMIN_USERNAME,
-  ADMIN_PASSWORD,
 } from "@/lib/admin.functions";
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from "@/lib/admin-credentials";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
