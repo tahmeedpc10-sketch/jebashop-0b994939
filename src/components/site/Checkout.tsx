@@ -56,7 +56,7 @@ export function Checkout() {
   }, [product, selectedColor]);
 
   const subtotal = product.price * qty;
-  const delivery = 80;
+  const delivery = 0;
   const total = subtotal + delivery;
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
